@@ -1,0 +1,29 @@
+version: "3"
+services:
+  # WPは自分でインストールしておく
+  wordpress:
+    image: wordpress:latest
+    container_name: "wordpress"
+    # localdataに自分のファイルを置く
+    volumes:
+      - "./localdata/wp-content:/var/www/html/wp-content"
+      - "./localdata/.docker/backup:/tmp/backup"
+      - "./localdata/.docker/log:/tmp/log"
+    ports:
+      - 8000:80
+    depends_on:
+      - db
+    environment:
+      WORDPRESS_DB_HOST: "db:3306"
+    env_file: .env
+
+  # DBのデータはローカルに保存
+  db:
+    image: mysql:5.7
+    container_name: "db"
+    volumes:
+      - "db-data:/var/lib/mysql"
+    env_file: .env
+
+volumes:
+  db-data:
